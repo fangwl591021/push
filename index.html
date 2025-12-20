@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flex Sender Ultra Pro v1.6</title>
+    <!-- 版本標記 v1.7 -->
+    <title>Flex Sender Ultra Pro v1.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <!-- 引進專門縮短網址資料用的壓縮庫 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Fira+Code:wght@400;500&display=swap');
@@ -96,11 +96,11 @@
         }
 
         .device-frame {
-            width: 360px;
-            min-height: 640px;
+            width: 380px;
+            min-height: 660px;
             background: var(--line-blue);
-            border-radius: 40px;
-            border: 10px solid #111827;
+            border-radius: 44px;
+            border: 12px solid #111827;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
@@ -109,7 +109,7 @@
         }
 
         .device-header {
-            height: 35px;
+            height: 40px;
             background: rgba(0,0,0,0.1);
             display: flex;
             justify-content: center;
@@ -118,15 +118,15 @@
 
         .device-header::after {
             content: '';
-            width: 45px;
-            height: 4px;
+            width: 50px;
+            height: 5px;
             background: rgba(255,255,255,0.2);
             border-radius: 10px;
         }
 
         .device-screen {
             flex: 1;
-            padding: 12px;
+            padding: 14px;
             overflow-y: auto;
         }
         .device-screen::-webkit-scrollbar { display: none; }
@@ -139,21 +139,25 @@
             width: 100%;
         }
 
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; }
-        .status-online { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
-        .status-offline { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .status-online { background: #22c55e; box-shadow: 0 0 12px #22c55e; }
+        .status-offline { background: #ef4444; box-shadow: 0 0 12px #ef4444; }
 
         .btn-send {
             background: var(--line-green);
             color: white;
-            padding: 10px 28px;
-            border-radius: 12px;
+            padding: 12px 32px;
+            border-radius: 14px;
             font-weight: 900;
-            font-size: 15px;
+            font-size: 16px;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         .btn-send:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-send:active { transform: translateY(0); }
@@ -161,13 +165,13 @@
         .btn-tool {
             background: #3c3c3c;
             color: #d1d5db;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 8px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             transition: all 0.2s;
         }
         .btn-tool:hover { background: #4b5563; color: white; }
@@ -177,15 +181,15 @@
 
     <header>
         <div class="flex items-center gap-4">
-            <div class="bg-[#06C755] p-2 rounded-2xl text-white shadow-lg shadow-emerald-100">
+            <div class="bg-[#06C755] p-2.5 rounded-2xl text-white shadow-lg">
                 <i data-lucide="send"></i>
             </div>
             <div>
                 <h1 class="font-black text-slate-800 m-0 text-lg flex items-center gap-2 tracking-tight">
-                    Flex Sender Ultra <span class="text-xs bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">v1.6</span>
+                    Flex Sender Pro <span class="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full">v1.7</span>
                     <span id="liff-status-indicator" class="status-dot status-offline"></span>
                 </h1>
-                <p id="user-status-text" class="text-[10px] text-slate-400 font-bold uppercase m-0 tracking-widest">OFFLINE</p>
+                <p id="user-status-text" class="text-[10px] text-slate-400 font-bold uppercase m-0 tracking-widest">系統未連線</p>
             </div>
         </div>
 
@@ -211,20 +215,20 @@
                         <i data-lucide="code-2" class="w-3.5 h-3.5"></i> JSON Input
                     </span>
                     <div class="flex items-center gap-2 bg-[#3c3c3c] rounded-lg px-3 py-1 text-white border border-white/5">
-                        <span class="text-[9px] font-bold text-slate-400">ALT TEXT</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">ALT TEXT</span>
                         <input type="text" id="alt-text-input" value="收到精選訊息" 
-                               class="text-xs bg-transparent outline-none w-48 font-medium">
+                               class="text-xs bg-transparent outline-none w-56 font-medium">
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="generateShareUrl()" class="btn-tool !bg-emerald-700 !text-white shadow-lg shadow-emerald-900/20">
-                        <i data-lucide="link" class="w-3.5 h-3.5"></i> 產生極短分享連結
+                    <button onclick="generateShareUrl()" class="btn-tool !bg-emerald-700 !text-white shadow-lg">
+                        <i data-lucide="link" class="w-3.5 h-3.5"></i> 產生短連結
                     </button>
                     <button onclick="formatCode()" class="btn-tool">
-                        <i data-lucide="wand-2" class="w-3 h-3"></i> 格式化
+                        <i data-lucide="wand-2" class="w-3.5 h-3.5"></i> 格式化
                     </button>
                     <button onclick="clearAll()" class="btn-tool !text-red-400">
-                        <i data-lucide="trash-2" class="w-3 h-3"></i> 清空
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 清空
                     </button>
                 </div>
             </div>
@@ -233,24 +237,24 @@
 
         <!-- 預覽區 -->
         <section class="preview-wrapper custom-scrollbar">
-            <div class="flex items-center gap-2 mb-4">
-                <i data-lucide="smartphone" class="w-4 h-4 text-slate-500"></i>
-                <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Device Live Preview</span>
+            <div class="flex items-center gap-2 mb-6">
+                <i data-lucide="smartphone" class="w-5 h-5 text-slate-500"></i>
+                <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em]">Device Live Preview</span>
             </div>
             
             <div class="device-frame">
                 <div class="device-header"></div>
                 <div class="device-screen">
-                    <div id="flex-render-mount"></div>
+                    <div id="flex-render-mount" class="flex flex-col gap-4 pb-10"></div>
                 </div>
             </div>
 
-            <div class="mt-6 bg-white p-3.5 rounded-2xl border border-slate-200 w-full max-w-[360px] shadow-sm">
+            <div class="mt-8 bg-white p-4 rounded-2xl border border-slate-200 w-full max-w-[380px] shadow-sm">
                 <div class="flex justify-between items-center mb-2">
-                    <p class="text-[9px] font-black text-slate-400 uppercase flex items-center gap-1.5">
+                    <p class="text-[10px] font-black text-slate-400 uppercase flex items-center gap-1.5">
                         <i data-lucide="info" class="w-3 h-3"></i> URL Diagnostic
                     </p>
-                    <span id="url-len-badge" class="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">0 chars</span>
+                    <span id="url-len-badge" class="text-[9px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-bold">0 chars</span>
                 </div>
                 <code id="debug-url" class="text-[9px] text-emerald-600 block break-all font-mono bg-slate-50 p-2 rounded-lg border border-slate-100"></code>
             </div>
@@ -258,7 +262,7 @@
     </main>
 
     <div id="toast-notif" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl text-sm font-bold transform translate-y-32 opacity-0 transition-all duration-500 z-50 flex items-center gap-3">
-        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
         <span id="toast-text"></span>
     </div>
 
@@ -282,8 +286,8 @@
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
-                    { "type": "text", "text": "Flex Sender v1.6", "weight": "bold", "size": "xl", "color": "#111111" },
-                    { "type": "text", "text": "此版本採用 LZ-String 壓縮，分享連結長度縮減 70% 以上。", "size": "sm", "color": "#666666", "margin": "md", "wrap": true }
+                    { "type": "text", "text": "Flex Sender v1.7", "weight": "bold", "size": "xl", "color": "#111111" },
+                    { "type": "text", "text": "如果您看到這個訊息，代表 v1.7 更新已成功部署！", "size": "sm", "color": "#666666", "margin": "md", "wrap": true }
                 ]
             }
         };
@@ -296,15 +300,12 @@
             const compressedJson = urlParams.get('msg');
             const liffIdParam = urlParams.get('liffId');
             
-            // 優先從網址參數載入 JSON (使用 LZ-String 解壓)
             if (compressedJson) {
                 try {
-                    // 嘗試用新版 LZ-String 解壓
                     const decompressed = LZString.decompressFromEncodedURIComponent(compressedJson);
                     if (decompressed) {
                         jsonInput.value = JSON.stringify(JSON.parse(decompressed), null, 4);
                     } else {
-                        // 嘗試相容 v1.5 的舊版 Base64
                         const decoded = decodeURIComponent(escape(atob(compressedJson)));
                         jsonInput.value = JSON.stringify(JSON.parse(decoded), null, 4);
                     }
@@ -319,7 +320,7 @@
                 liffIdInput.value = liffIdParam;
                 initLIFF(liffIdParam);
             } else {
-                const savedId = localStorage.getItem('liff_id_v1.6');
+                const savedId = localStorage.getItem('liff_id_v1.7');
                 if (savedId) {
                     liffIdInput.value = savedId;
                     initLIFF(savedId);
@@ -357,35 +358,29 @@
         liffIdInput.addEventListener('blur', () => {
             const id = liffIdInput.value.trim();
             if (id) {
-                localStorage.setItem('liff_id_v1.6', id);
+                localStorage.setItem('liff_id_v1.7', id);
                 initLIFF(id);
             }
         });
 
-        // --- 製作超短分享網址 (採用 LZ-String 壓縮) ---
         function generateShareUrl() {
             const jsonStr = jsonInput.value.trim();
             const liffId = liffIdInput.value.trim();
             try {
                 const obj = JSON.parse(jsonStr);
                 const minified = JSON.stringify(obj);
-                
-                // 使用壓縮力更強的 LZ-String
                 const compressed = LZString.compressToEncodedURIComponent(minified);
-                
                 const currentBaseUrl = window.location.href.split('?')[0];
                 let shareUrl = `${currentBaseUrl}?msg=${compressed}`;
                 if (liffId) shareUrl += `&liffId=${liffId}`;
                 
-                // 複製並提示
                 const el = document.createElement('textarea');
                 el.value = shareUrl;
                 document.body.appendChild(el);
                 el.select();
                 document.execCommand('copy');
                 document.body.removeChild(el);
-                
-                showToast(`連結已大幅縮短並複製！`);
+                showToast(`已產生壓縮連結並複製！`);
             } catch (e) {
                 showToast("JSON 語法錯誤");
             }
@@ -399,9 +394,9 @@
                 if (data.type === "carousel") {
                     const scrollBox = document.createElement('div');
                     scrollBox.style.display = "flex";
-                    scrollBox.style.gap = "10px";
+                    scrollBox.style.gap = "12px";
                     scrollBox.style.overflowX = "auto";
-                    scrollBox.style.paddingBottom = "10px";
+                    scrollBox.style.paddingBottom = "12px";
                     data.contents.forEach(b => scrollBox.appendChild(createFlexBubble(b)));
                     renderMount.appendChild(scrollBox);
                 } else {
@@ -413,7 +408,7 @@
         function createFlexBubble(json) {
             const bubble = document.createElement('div');
             bubble.className = "flex-bubble-card";
-            bubble.style.width = json.size === "micro" ? "160px" : (json.size === "nano" ? "120px" : "260px");
+            bubble.style.width = json.size === "micro" ? "180px" : (json.size === "nano" ? "140px" : "300px");
             bubble.style.flexShrink = "0";
             if (json.hero) bubble.appendChild(renderFlexComp(json.hero));
             if (json.body) bubble.appendChild(renderFlexComp(json.body));
@@ -429,19 +424,19 @@
                     el = document.createElement('div');
                     el.style.display = "flex";
                     el.style.flexDirection = comp.layout === 'horizontal' ? 'row' : 'column';
-                    if (comp.paddingAll) el.style.padding = "10px";
+                    if (comp.paddingAll) el.style.padding = "14px";
                     if (comp.backgroundColor) el.style.backgroundColor = comp.backgroundColor;
-                    if (comp.spacing) el.style.gap = "6px";
+                    if (comp.spacing) el.style.gap = "8px";
                     comp.contents?.forEach(c => el.appendChild(renderFlexComp(c)));
                     break;
                 case 'text':
                     el = document.createElement('div');
                     el.innerText = comp.text;
-                    el.style.fontSize = comp.size === 'xl' ? '18px' : (comp.size === 'xs' ? '11px' : '13px');
-                    el.style.fontWeight = comp.weight === 'bold' ? '700' : '400';
+                    el.style.fontSize = comp.size === 'xl' ? '22px' : (comp.size === 'xs' ? '12px' : '15px');
+                    el.style.fontWeight = comp.weight === 'bold' ? '900' : '400';
                     el.style.color = comp.color || '#333';
                     if (comp.align === 'center') el.style.textAlign = 'center';
-                    if (comp.margin) el.style.marginTop = "6px";
+                    if (comp.margin) el.style.marginTop = "8px";
                     if (comp.wrap) el.style.wordBreak = "break-all";
                     break;
                 case 'image':
@@ -456,11 +451,11 @@
                     el = document.createElement('div');
                     el.innerText = comp.action?.label || '按鈕';
                     el.style.textAlign = "center";
-                    el.style.padding = "8px";
-                    el.style.margin = "3px";
-                    el.style.borderRadius = "8px";
-                    el.style.fontSize = "12px";
-                    el.style.fontWeight = "bold";
+                    el.style.padding = "10px";
+                    el.style.margin = "4px";
+                    el.style.borderRadius = "12px";
+                    el.style.fontSize = "14px";
+                    el.style.fontWeight = "900";
                     if (comp.style === 'primary') {
                         el.style.background = comp.color || "#06C755";
                         el.style.color = "white";
@@ -485,7 +480,7 @@
                 const res = await liff.shareTargetPicker([
                     { "type": "flex", "altText": altTextInput.value, "contents": flex }
                 ]);
-                if (res) showToast("🎉 訊息已傳送！");
+                if (res) showToast("🎉 訊息已傳送成功！");
             } catch (err) {
                 showToast("格式不符規範");
             }
@@ -501,7 +496,7 @@
 
         function clearAll() {
             jsonInput.value = "";
-            renderMount.innerHTML = '<div class="text-center text-slate-400 text-xs mt-20 italic">等待輸入...</div>';
+            renderMount.innerHTML = '<div class="text-center text-slate-400 text-sm mt-20 italic">等待輸入 JSON...</div>';
             showToast("已清空");
         }
 
@@ -514,10 +509,9 @@
 
         jsonInput.addEventListener('input', () => {
             updateLivePreview();
-            // 更新長度計數
             const len = jsonInput.value.length;
             urlLenBadge.innerText = `${len} chars`;
-            urlLenBadge.className = `text-[9px] px-1.5 py-0.5 rounded font-bold ${len > 2000 ? 'bg-red-100 text-red-500' : 'bg-slate-100 text-slate-500'}`;
+            urlLenBadge.className = `text-[9px] px-2 py-0.5 rounded font-bold ${len > 2500 ? 'bg-red-100 text-red-500' : 'bg-slate-100 text-slate-500'}`;
         });
     </script>
 </body>
