@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 版本標記 v1.7 -->
-    <title>Flex Sender Ultra Pro v1.7</title>
+    <!-- 強制防快取 Meta 標籤 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <title>Flex Sender Ultra Pro v1.8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -16,6 +20,7 @@
             --line-green: #06C755;
             --line-blue: #748da6;
             --editor-bg: #1e1e1e;
+            --header-bg: #0f172a; /* 改為深藍色，方便肉眼辨識版本更新 */
         }
 
         body { 
@@ -28,21 +33,24 @@
             overflow: hidden;
         }
 
+        /* 頂部導航 - v1.8 改為深色風格以辨識更新 */
         header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
+            background: var(--header-bg);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             padding: 0 1.5rem;
             height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             z-index: 50;
         }
 
+        header h1 { color: white; }
+
         .liff-id-container {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
             padding: 0.5rem 1rem;
             display: flex;
@@ -54,8 +62,11 @@
 
         .liff-id-container:focus-within {
             border-color: var(--line-green);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(6, 199, 85, 0.1);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .liff-id-container input {
+            color: #e2e8f0;
         }
 
         main {
@@ -85,9 +96,9 @@
         }
 
         .preview-wrapper {
-            width: 520px;
-            background: #e5e7eb;
-            border-left: 1px solid #d1d5db;
+            width: 550px;
+            background: #e2e8f0;
+            border-left: 1px solid #cbd5e1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -97,11 +108,11 @@
 
         .device-frame {
             width: 380px;
-            min-height: 660px;
+            min-height: 680px;
             background: var(--line-blue);
-            border-radius: 44px;
-            border: 12px solid #111827;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            border-radius: 48px;
+            border: 12px solid #020617;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -133,7 +144,7 @@
 
         .flex-bubble-card {
             background: white;
-            border-radius: 16px;
+            border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             width: 100%;
@@ -158,13 +169,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            box-shadow: 0 4px 14px 0 rgba(6, 199, 85, 0.39);
         }
-        .btn-send:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn-send:active { transform: translateY(0); }
+        .btn-send:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-send:active { transform: scale(0.98); }
 
         .btn-tool {
-            background: #3c3c3c;
-            color: #d1d5db;
+            background: #334155;
+            color: #f1f5f9;
             padding: 6px 14px;
             border-radius: 8px;
             font-size: 12px;
@@ -174,7 +186,7 @@
             gap: 6px;
             transition: all 0.2s;
         }
-        .btn-tool:hover { background: #4b5563; color: white; }
+        .btn-tool:hover { background: #475569; color: white; }
     </style>
 </head>
 <body>
@@ -185,43 +197,42 @@
                 <i data-lucide="send"></i>
             </div>
             <div>
-                <h1 class="font-black text-slate-800 m-0 text-lg flex items-center gap-2 tracking-tight">
-                    Flex Sender Pro <span class="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full">v1.7</span>
+                <h1 class="font-black m-0 text-lg flex items-center gap-2 tracking-tight">
+                    Flex Sender Pro <span class="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full">v1.8</span>
                     <span id="liff-status-indicator" class="status-dot status-offline"></span>
                 </h1>
-                <p id="user-status-text" class="text-[10px] text-slate-400 font-bold uppercase m-0 tracking-widest">系統未連線</p>
+                <p id="user-status-text" class="text-[10px] text-slate-500 font-bold uppercase m-0 tracking-widest">系統離線中</p>
             </div>
         </div>
 
         <div class="flex items-center gap-4">
-            <div class="liff-id-container shadow-sm">
-                <i data-lucide="shield-check" class="w-5 h-5 text-slate-400"></i>
+            <div class="liff-id-container">
+                <i data-lucide="shield-check" class="w-5 h-5 text-slate-500"></i>
                 <input type="text" id="liff-id-input" placeholder="貼入您的 LIFF ID" 
-                       class="bg-transparent text-sm w-full outline-none font-mono font-bold text-slate-700">
+                       class="bg-transparent text-sm w-full outline-none font-mono font-bold">
             </div>
-            <button id="btn-login-trigger" onclick="liff.login()" class="hidden text-sm font-bold text-blue-600 hover:underline">登入</button>
-            <button onclick="sendFlexMessage()" class="btn-send shadow-xl shadow-emerald-200">
-                <i data-lucide="share-2" class="w-4 h-4"></i> 好友分享
+            <button id="btn-login-trigger" onclick="liff.login()" class="hidden text-sm font-bold text-blue-400 hover:text-blue-300">登入</button>
+            <button onclick="sendFlexMessage()" class="btn-send">
+                <i data-lucide="share-2" class="w-4 h-4"></i> 分享好友
             </button>
         </div>
     </header>
 
     <main>
-        <!-- 編輯區 -->
         <section class="editor-wrapper">
-            <div class="px-6 py-3 border-b border-white/10 flex justify-between items-center bg-[#252526]">
+            <div class="px-6 py-3 border-b border-white/10 flex justify-between items-center bg-[#1e1e1e]">
                 <div class="flex items-center gap-6">
                     <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                         <i data-lucide="code-2" class="w-3.5 h-3.5"></i> JSON Input
                     </span>
-                    <div class="flex items-center gap-2 bg-[#3c3c3c] rounded-lg px-3 py-1 text-white border border-white/5">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase">ALT TEXT</span>
+                    <div class="flex items-center gap-2 bg-[#2d2d2d] rounded-lg px-3 py-1 text-white border border-white/5">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase">Alt Text</span>
                         <input type="text" id="alt-text-input" value="收到精選訊息" 
                                class="text-xs bg-transparent outline-none w-56 font-medium">
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="generateShareUrl()" class="btn-tool !bg-emerald-700 !text-white shadow-lg">
+                    <button onclick="generateShareUrl()" class="btn-tool !bg-emerald-600 !text-white">
                         <i data-lucide="link" class="w-3.5 h-3.5"></i> 產生短連結
                     </button>
                     <button onclick="formatCode()" class="btn-tool">
@@ -235,7 +246,6 @@
             <textarea id="json-input" spellcheck="false" placeholder="在此處貼上 Flex Message JSON..."></textarea>
         </section>
 
-        <!-- 預覽區 -->
         <section class="preview-wrapper custom-scrollbar">
             <div class="flex items-center gap-2 mb-6">
                 <i data-lucide="smartphone" class="w-5 h-5 text-slate-500"></i>
@@ -286,8 +296,8 @@
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
-                    { "type": "text", "text": "Flex Sender v1.7", "weight": "bold", "size": "xl", "color": "#111111" },
-                    { "type": "text", "text": "如果您看到這個訊息，代表 v1.7 更新已成功部署！", "size": "sm", "color": "#666666", "margin": "md", "wrap": true }
+                    { "type": "text", "text": "Flex Sender v1.8", "weight": "bold", "size": "xl", "color": "#111111" },
+                    { "type": "text", "text": "成功載入 v1.8 版本！現在分享連結已支援 LZ 壓縮技術。", "size": "sm", "color": "#666666", "margin": "md", "wrap": true }
                 ]
             }
         };
@@ -320,7 +330,7 @@
                 liffIdInput.value = liffIdParam;
                 initLIFF(liffIdParam);
             } else {
-                const savedId = localStorage.getItem('liff_id_v1.7');
+                const savedId = localStorage.getItem('liff_id_v1.8');
                 if (savedId) {
                     liffIdInput.value = savedId;
                     initLIFF(savedId);
@@ -334,7 +344,7 @@
                 await liff.init({ liffId: id });
                 liffReady = true;
                 syncAuthStatus();
-                showToast("LIFF 準備就緒");
+                showToast("LIFF 連線已就緒");
             } catch (err) {
                 liffReady = false;
                 showToast("初始化失敗");
@@ -345,12 +355,12 @@
             if (liff.isLoggedIn()) {
                 statusIndicator.className = "status-dot status-online";
                 liff.getProfile().then(p => {
-                    userStatusText.innerText = `ONLINE: ${p.displayName}`;
+                    userStatusText.innerText = `Online: ${p.displayName}`;
                 });
                 document.getElementById('btn-login-trigger').classList.add('hidden');
             } else {
                 statusIndicator.className = "status-dot status-offline";
-                userStatusText.innerText = "尚未登入 LINE";
+                userStatusText.innerText = "系統離線中";
                 document.getElementById('btn-login-trigger').classList.remove('hidden');
             }
         }
@@ -358,7 +368,7 @@
         liffIdInput.addEventListener('blur', () => {
             const id = liffIdInput.value.trim();
             if (id) {
-                localStorage.setItem('liff_id_v1.7', id);
+                localStorage.setItem('liff_id_v1.8', id);
                 initLIFF(id);
             }
         });
@@ -380,7 +390,7 @@
                 el.select();
                 document.execCommand('copy');
                 document.body.removeChild(el);
-                showToast(`已產生壓縮連結並複製！`);
+                showToast(`壓縮連結已製作並複製！`);
             } catch (e) {
                 showToast("JSON 語法錯誤");
             }
@@ -408,7 +418,7 @@
         function createFlexBubble(json) {
             const bubble = document.createElement('div');
             bubble.className = "flex-bubble-card";
-            bubble.style.width = json.size === "micro" ? "180px" : (json.size === "nano" ? "140px" : "300px");
+            bubble.style.width = json.size === "micro" ? "180px" : (json.size === "nano" ? "140px" : "310px");
             bubble.style.flexShrink = "0";
             if (json.hero) bubble.appendChild(renderFlexComp(json.hero));
             if (json.body) bubble.appendChild(renderFlexComp(json.body));
@@ -480,7 +490,7 @@
                 const res = await liff.shareTargetPicker([
                     { "type": "flex", "altText": altTextInput.value, "contents": flex }
                 ]);
-                if (res) showToast("🎉 訊息已傳送成功！");
+                if (res) showToast("🎉 訊息已發送成功！");
             } catch (err) {
                 showToast("格式不符規範");
             }
