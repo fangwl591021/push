@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLEX Hub OA - 簡化版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- LINE LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen bg-gray-50"></div>
+
+    <script>
+        // 簡化版應用程式
+        const App = () => {
+            const [view, setView] = useState('loading');
+            const [user, setUser] = useState(null);
+            const [status, setStatus] = useState(null);
+            
+            // GAS Web App 網址
+            const GAS_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+            
+            useEffect(() => {
+                initApp();
+            }, []);
+            
+            const initApp = async () => {
+                try {
+                    // 初始化 LIFF
+                    await liff.init({ liffId: "2008541971-XPIDtaaj" });
+                    
+                    if (!liff.isLoggedIn()) {
+                        setView('login');
+                        return;
+                    }
+                    
+                    const profile = await liff.getProfile();
+                    setUser(profile);
+                    
+                    // 檢查註冊狀態
+                    await checkRegistration(profile.userId);
+                    
+                } catch (error) {
+                    console.error('初始化失敗:', error);
+                    setView('login');
+                }
+            };
+            
+            const checkRegistration = async (userId) => {
+                try {
+                    const response = await fetch(`${GAS_URL}?userId=${userId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'NOT_FOUND') {
+                        setView('register');
+                    } else if (data.status === 'PENDING') {
+                        setView('pending');
+                        setStatus(data);
+                    } else if (data.status === 'APPROVED') {
+                        // 檢查效期
+                        if (data.endDate && new Date() > new Date(data.endDate)) {
+                            setView('expired');
+                        } else {
+                            setView('main');
+                        }
+                    }
+                } catch (error) {
+                    console.error('檢查失敗:', error);
+                    setView('register');
+                }
+            };
+            
+            const handleRegister = async (formData) => {
+                const payload = {
+                    userId: user.userId,
+                    name: formData.name,
+                    phone: formData.phone,
+                    company: formData.company
+                };
+                
+                try {
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        setView('pending');
+                        alert('註冊成功！請等待管理員審核。');
+                    } else {
+                        alert('註冊失敗：' + result.error);
+                    }
+                } catch (error) {
+                    alert('註冊失敗，請稍後再試');
+                }
+            };
+            
+            // 根據 view 渲染不同畫面
+            const renderView = () => {
+                switch(view) {
+                    case 'loading':
+                        return `<div class="flex items-center justify-center h-screen">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+                        </div>`;
+                        
+                    case 'login':
+                        return `<div class="flex items-center justify-center h-screen">
+                            <button onclick="liff.login()" class="bg-green-500 text-white px-8 py-4 rounded-lg font-bold">
+                                LINE 登入
+                            </button>
+                        </div>`;
+                        
+                    case 'register':
+                        return `
+                        <div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+                            <h2 class="text-2xl font-bold mb-6">註冊帳號</h2>
+                            <form id="registerForm">
+                                <div class="mb-4">
+                                    <label class="block mb-2">姓名</label>
+                                    <input type="text" id="name" class="w-full p-2 border rounded" value="${user?.displayName || ''}" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block mb-2">電話</label>
+                                    <input type="tel" id="phone" class="w-full p-2 border rounded" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block mb-2">公司/單位</label>
+                                    <input type="text" id="company" class="w-full p-2 border rounded" required>
+                                </div>
+                                <button type="submit" class="w-full bg-green-500 text-white py-3 rounded font-bold">
+                                    提交註冊
+                                </button>
+                            </form>
+                        </div>`;
+                        
+                    case 'pending':
+                        return `<div class="text-center mt-20">
+                            <div class="text-5xl mb-6">⏳</div>
+                            <h1 class="text-2xl font-bold mb-4">等待審核中</h1>
+                            <p class="text-gray-600">您的註冊資料已提交，請等待管理員審核</p>
+                            <button onclick="checkRegistration('${user.userId}')" class="mt-6 bg-blue-500 text-white px-6 py-2 rounded">
+                                檢查狀態
+                            </button>
+                        </div>`;
+                        
+                    case 'main':
+                        return `<div class="p-6">
+                            <h1 class="text-2xl font-bold mb-6">主畫面</h1>
+                            <p>歡迎 ${status?.name}！</p>
+                            <!-- 這裡放您的 FLEX 設計工具 iframe -->
+                            <iframe src="https://fangwl591021.github.io/line-flex-images/" class="w-full h-96 mt-4 border"></iframe>
+                        </div>`;
+                        
+                    default:
+                        return `<div>錯誤畫面</div>`;
+                }
+            };
+            
+            // 初始化 React-like 狀態管理
+            const states = {};
+            const listeners = [];
+            
+            function useState(initialValue) {
+                const key = useState.caller.name;
+                if (!states[key]) states[key] = initialValue;
+                
+                const setter = (newValue) => {
+                    states[key] = newValue;
+                    listeners.forEach(fn => fn());
+                    updateView();
+                };
+                
+                return [states[key], setter];
+            }
+            
+            function useEffect(fn, deps) {
+                fn();
+            }
+            
+            function updateView() {
+                document.getElementById('app').innerHTML = renderView();
+                attachEventListeners();
+            }
+            
+            function attachEventListeners() {
+                if (view === 'register') {
+                    const form = document.getElementById('registerForm');
+                    if (form) {
+                        form.onsubmit = (e) => {
+                            e.preventDefault();
+                            const formData = {
+                                name: document.getElementById('name').value,
+                                phone: document.getElementById('phone').value,
+                                company: document.getElementById('company').value
+                            };
+                            handleRegister(formData);
+                        };
+                    }
+                }
+            }
+            
+            // 初始化
+            updateView();
+        };
+
+        // 啟動應用程式
+        window.onload = () => {
+            App();
+        };
+    </script>
+</body>
+</html>
